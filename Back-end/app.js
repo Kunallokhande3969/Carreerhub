@@ -14,7 +14,7 @@ require("./models/database").connectDatabase();
 const cors = require("cors");
 app.use(cors({
   origin: [
-     "http://localhost:3000",
+     "https://carreerhub-ochre.vercel.app",
   ],
   credentials: true
 }));
