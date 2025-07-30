@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
