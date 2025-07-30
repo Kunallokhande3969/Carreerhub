@@ -13,6 +13,16 @@ const Page = () => {
   );
   const dispatch = useDispatch();
 
+  // Filter out duplicate jobs
+  const uniqueJobs = jobs && jobs.filter((job, index, self) =>
+    index === self.findIndex((j) => j._id === job._id)
+  );
+
+  // Filter out duplicate internships
+  const uniqueInternships = internships && internships.filter((internship, index, self) =>
+    index === self.findIndex((i) => i._id === internship._id)
+  );
+
   const ApplyJobHandler = (id) => {
     dispatch(asyncapplyjobstudent(id));
   };
@@ -27,8 +37,8 @@ const Page = () => {
     <div className="container mt-5 mb-5">
       <h4>All Available Jobs For {student && student.firstname}</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
-        {jobs &&
-          jobs.map((j) => (
+        {uniqueJobs &&
+          uniqueJobs.map((j) => (
             <div className="bg-white p-4 rounded-md shadow-md" key={j._id}>
               <h2 className="text-xl font-semibold">Title -{j.title}</h2>
               <p className="text-gray-600">
@@ -67,8 +77,8 @@ const Page = () => {
 
       <h4>All Available Internships For {student && student.firstname}</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {internships &&
-          internships.map((i) => (
+        {uniqueInternships &&
+          uniqueInternships.map((i) => (
             <div className="bg-white p-4 rounded-md shadow-md" key={i._id}>
               <h2 className="text-xl font-semibold">Profile - {i.profile}</h2>
               <p className="text-gray-600">
@@ -83,11 +93,6 @@ const Page = () => {
               <p className="text-gray-600">
                 <b>Duration</b> : {i.duration}
               </p>
-              {/* <p className="text-gray-600"><b>Responsibility</b> : {i.responsibility}</p> */}
-              {/* <p className="text-gray-600"><b>Stipend</b>: {i.stipend.status}</p>
-              <p className="text-gray-600"><b>Stipend</b>: {i.stipend.amount}</p>
-              <p className="text-gray-600"><b>Perks</b>: {i.perks}</p>
-              <p className="text-gray-600"><b>Assesment</b>: {i.assesments}</p> */}
               <Link
                 className="fs-sm no-underline me-4"
                 href={`/student/auth/read/${i._id}`}

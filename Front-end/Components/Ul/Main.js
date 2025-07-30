@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import Image from "next/image"; // Using Next.js Image component for better performance
 
 const Main = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -17,6 +18,7 @@ const Main = () => {
         });
       }
     } else {
+      // Using Next.js router for client-side navigation
       window.location.href = path;
     }
   };
@@ -70,38 +72,47 @@ const Main = () => {
             {careerCards.map((card, index) => (
               <div
                 key={index}
-                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-80 md:h-96"
+                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-500 h-80 md:h-96"
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Background Image */}
-                <img
-                  src={card.src}
-                  alt={card.alt}
-                  className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${
-                    hoveredCard === index ? "scale-105" : "scale-100"
-                  }`}
-                  loading="lazy"
-                />
+                {/* Background Image with smoother hover effect */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden">
+                  <Image
+                    src={card.src}
+                    alt={card.alt}
+                    fill
+                    className={`object-cover transition-all duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                      hoveredCard === index ? "scale-110" : "scale-100"
+                    }`}
+                    loading="lazy"
+                    quality={80}
+                    priority={index === 0} // Only prioritize first image
+                  />
+                </div>
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                {/* Gradient Overlay with smooth transition */}
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-all duration-500 ${
+                  hoveredCard === index ? "opacity-100" : "opacity-90"
+                }`} />
 
                 {/* Card Content */}
                 <div className="relative h-full flex flex-col justify-end p-6 text-white">
                   <div
-                    className={`transition-transform duration-300 ${
-                      hoveredCard === index ? "translate-y-0" : "translate-y-8"
+                    className={`transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                      hoveredCard === index ? "translate-y-0 opacity-100" : "translate-y-8 opacity-90"
                     }`}
                   >
                     <h3 className="text-xl md:text-2xl font-bold mb-2">{card.title}</h3>
                     {card.description && (
-                      <p className="text-sm md:text-base opacity-90 mb-4">{card.description}</p>
+                      <p className="text-sm md:text-base mb-4 transition-opacity duration-300">
+                        {card.description}
+                      </p>
                     )}
                   </div>
 
                   <div
-                    className={`flex flex-wrap gap-3 transition-all duration-300 ${
+                    className={`flex flex-wrap gap-3 transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${
                       hoveredCard === index
                         ? "opacity-100 translate-y-0"
                         : "opacity-0 translate-y-4"
@@ -113,14 +124,14 @@ const Main = () => {
                         card.isOutline
                           ? "border-2 border-white text-white hover:bg-white hover:text-black"
                           : "bg-white text-gray-900 hover:bg-gray-100"
-                      } px-5 py-2 rounded-full transition-colors`}
+                      } px-5 py-2 rounded-full transition-colors duration-300`}
                     >
                       {card.primaryAction} {!card.isOutline && <FiArrowRight className="ml-1.5" />}
                     </button>
 
                     <button
                       onClick={(e) => handleProtectedNav(e, "/apply")}
-                      className="inline-flex items-center font-medium border-2 border-white text-white px-5 py-2 rounded-full hover:bg-white hover:text-black transition-colors"
+                      className="inline-flex items-center font-medium border-2 border-white text-white px-5 py-2 rounded-full hover:bg-white hover:text-black transition-colors duration-300"
                     >
                       {card.secondaryAction}
                     </button>
