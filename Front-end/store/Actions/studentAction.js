@@ -1,5 +1,4 @@
 import axios from "@/utiles/axios";
-
 import {
   addstudent,
   removestudent,
@@ -7,7 +6,10 @@ import {
   removerorr,
   addjobs,
   addinternships,
+  
+  
 } from "../Reducers/studentReducer";
+
 
 const getErrorMessage = (error, fallback = "Something went wrong") => {
   return error?.response?.data?.message || error?.message || fallback;
@@ -92,15 +94,16 @@ export const asyncstudentresetpassword =
     }
   };
 
-export const asyncstudentforgetpassword = (email) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/send-mail/", email);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Forgot password failed")));
-    console.log(error);
-  }
-};  
+export const asyncstudentforgetpassword =
+  (email) => async (dispatch) => {
+    try {
+      const { data } = await axios.post("/student/send-mail/", email);
+      dispatch(asynccurrentstudent());
+    } catch (error) {
+      dispatch(iserorr(getErrorMessage(error, "Forgot password failed")));
+      console.log(error);
+    }
+  };
 
 export const asyncstudentotppassword = (pwd) => async (dispatch) => {
   try {
@@ -159,16 +162,17 @@ export const asyncapplyjobstudent = (id) => async (dispatch) => {
   }
 };
 
-export const asyncapplyinternshipstudent = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/apply/internship/" + id);
-    dispatch(asynccurrentstudent());
-    dispatch(asyncallinternships());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Apply internship failed")));
-    console.log(error);
-  }
-};
+export const asyncapplyinternshipstudent =
+  (id) => async (dispatch) => {
+    try {
+      const { data } = await axios.post("/student/apply/internship/" + id);
+      dispatch(asynccurrentstudent());
+      dispatch(asyncallinternships());
+    } catch (error) {
+      dispatch(iserorr(getErrorMessage(error, "Apply internship failed")));
+      console.log(error);
+    }
+  };
 
 export const asysnaddeducation = (edu) => async (dispatch) => {
   try {
@@ -250,15 +254,16 @@ export const asyncdeleteinternship = (id) => async (dispatch) => {
   }
 };
 
-export const asynceditinternship = (id, intern) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-intern/" + id, intern);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit internship failed")));
-    console.log(error);
-  }
-};
+export const asynceditinternship =
+  (id, intern) => async (dispatch) => {
+    try {
+      const { data } = await axios.post("/resume/edit-intern/" + id, intern);
+      dispatch(asynccurrentstudent());
+    } catch (error) {
+      dispatch(iserorr(getErrorMessage(error, "Edit internship failed")));
+      console.log(error);
+    }
+  };
 
 //================================ responbility resume ==========================
 
@@ -282,15 +287,16 @@ export const asyncdeleteresponsebility = (id) => async (dispatch) => {
   }
 };
 
-export const asynceditresponsibility = (id, resp) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-resp/" + id, resp);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit responsibility failed")));
-    console.log(error);
-  }
-};
+export const asynceditresponsibility =
+  (id, resp) => async (dispatch) => {
+    try {
+      const { data } = await axios.post("/resume/edit-resp/" + id, resp);
+      dispatch(asynccurrentstudent());
+    } catch (error) {
+      dispatch(iserorr(getErrorMessage(error, "Edit responsibility failed")));
+      console.log(error);
+    }
+  };
 
 // ==========================course resume ===================
 

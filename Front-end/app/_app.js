@@ -7,7 +7,7 @@ export default function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     setMounted(true);
-
+    // मोबाइल टच ठीक करने के लिए
     if (typeof window !== 'undefined') {
       import('fastclick').then(({ default: FastClick }) => {
         FastClick.attach(document.body);

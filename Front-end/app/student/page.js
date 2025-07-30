@@ -11,7 +11,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
+    // Simulate loading authentication state
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -79,6 +79,7 @@ const Page = () => {
           />
         </div>
       </div>
+
       {/* Features Section */}
       <div className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,6 +88,7 @@ const Page = () => {
               A better way to find opportunities
             </p>
           </div>
+
           <div className="mt-10">
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
               {/* Feature 1 */}

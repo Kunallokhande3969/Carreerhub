@@ -33,13 +33,9 @@ const StudentLayout = ({ children }) => {
 
   useEffect(() => {
     if (erorrs && erorrs.length > 0) {
-      
       toast.dismiss();
-
-      
       erorrs.forEach((err) => {
         if (err) {
-        
           toast.error(err, {
             toastId: err,
             autoClose: 5000,
@@ -54,7 +50,6 @@ const StudentLayout = ({ children }) => {
           }
         }
       });
-
       dispatch(removerorr());
     }
   }, [erorrs, dispatch]);
@@ -77,14 +72,15 @@ const StudentLayout = ({ children }) => {
   };
 
   return (
-    <div className="no-underline">
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
       <header className="w-full bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          {/* Left Logo Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <FcBriefcase className="text-3xl" />
-            <h1 className="text-2xl font-bold tracking-tight text-gray-800">
-              <span className="text-blue-600 inline-block mt-2">Career</span>Hub
+            <h1 className="text-2xl font-bold text-gray-800">
+              <span className="text-blue-600">Career</span>Hub
             </h1>
           </div>
 
@@ -104,211 +100,195 @@ const StudentLayout = ({ children }) => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-4 items-center text-base font-medium text-gray-700">
+          <nav className="hidden md:flex items-center space-x-6">
             <Link
               href={isAuthenticated ? "/student/auth" : "/student"}
-              className="hover:text-blue-600 transition-colors no-underline duration-200"
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
             >
               Home
             </Link>
 
-            <div className="flex items-center gap-1 group cursor-pointer">
-              <span className="group-hover:text-blue-600 transition-colors duration-200">
+            <div className="flex items-center group cursor-pointer">
+              <span className="text-gray-700 group-hover:text-blue-600 transition-colors font-medium">
                 Online Trainings
               </span>
-              <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-[2px] rounded-full shadow-sm">
+              <span className="ml-1 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 OFFER
               </span>
             </div>
 
             <Link
               href="#"
-              className="hover:text-blue-600 no-underline transition-colors duration-200 py-2 border-b border-gray-100"
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
               onClick={(e) => {
                 e.preventDefault();
-                const isResumeSelected = false; 
-                const isJobSelected = false; 
-
                 if (!isAuthenticated) {
-                  toast.error("please login to access the resources .");
+                  toast.error("Please login to access the resources.");
                   return;
                 }
-                if (isAuthenticated) {
-                  toast.info(
-                    "Please upload your resume and select the appropriate job or internship before analyzing."
-                  );
-                  return;
-                }
-
-                setIsMenuOpen(false); 
-              
+                toast.info(
+                  "Please upload your resume and select the appropriate job or internship before analyzing."
+                );
               }}
             >
               Analyze Resume+
             </Link>
 
             {isAuthenticated ? (
-              <>
+              <div className="flex items-center space-x-4">
                 <Link
-                  className="me-4 text-blue-500 no-underline hover:text-blue-700"
                   href="/student/auth/profile"
+                  className="text-blue-500 hover:text-blue-700 font-medium"
                 >
                   Profile
                 </Link>
                 <Link
-                  className="me-4 text-blue-500 no-underline hover:text-blue-700"
                   href="/student/auth/resume"
+                  className="text-blue-500 hover:text-blue-700 font-medium"
                 >
                   Resume
                 </Link>
                 <Link
-                  className="me-4 text-blue-500 no-underline hover:text-blue-700"
                   href="/student/auth/applied"
+                  className="text-blue-500 hover:text-blue-700 font-medium"
                 >
                   My Application
                 </Link>
                 <button
-                  className="bg-blue-500 no-underline hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-colors duration-200"
                   onClick={SignoutHandler}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-full transition-colors"
                 >
                   Signout
                 </button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center space-x-4">
                 <Link
                   href="/"
-                  className="relative inline-block no-underline text-blue-500 me-4 group hover:text-blue-700"
+                  className="text-blue-500 hover:text-blue-700 font-medium"
                 >
                   Main Page
                 </Link>
-
                 <Link
-                  className="bg-transparent me-4 no-underline hover:bg-blue-500 text-blue-700 font-semibold  py-2 px-4 border border-blue-500 hover:border-transparent rounded transition-colors duration-200"
                   href="/student/signin"
+                  className="border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-medium py-2 px-4 rounded transition-colors"
                 >
                   Signin
                 </Link>
                 <Link
-                  className="bg-blue-500 no-underline hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-colors duration-200"
                   href="/student/signup"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-full transition-colors"
                 >
                   Signup
                 </Link>
-              </>
+              </div>
             )}
           </nav>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white w-full px-4 pb-4 shadow-lg">
-            <div className="flex flex-col space-y-3 text-base font-medium text-gray-700">
+          <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="px-4 py-3 space-y-3">
               <Link
                 href={isAuthenticated ? "/student/auth" : "/student"}
-                className="hover:text-blue-600 transition-colors no-underline duration-200 py-2 border-b border-gray-100"
+                className="block py-2 text-gray-700 hover:text-blue-600 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
 
-              <div className="flex items-center gap-1 group cursor-pointer py-2 border-b border-gray-100">
-                <span className="group-hover:text-blue-600 transition-colors duration-200">
+              <div className="flex items-center py-2">
+                <span className="text-gray-700 hover:text-blue-600 font-medium">
                   Online Trainings
                 </span>
-                <span className="bg-yellow-500 text-white text-[10px] font-bold px-2 py-[2px] rounded-full shadow-sm">
+                <span className="ml-1 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   OFFER
                 </span>
               </div>
 
               <Link
                 href="#"
-                className="hover:text-blue-600 no-underline transition-colors duration-200 py-2 border-b border-gray-100"
+                className="block py-2 text-gray-700 hover:text-blue-600 font-medium"
                 onClick={(e) => {
                   e.preventDefault();
-                  const isResumeSelected = false; 
-                  const isJobSelected = false; 
-
-                  if (!isResumeSelected || !isJobSelected) {
-                    toast.info(
-                      " upload your resume and select the appropriate job or internship before analyzing."
-                    );
+                  setIsMenuOpen(false);
+                  if (!isAuthenticated) {
+                    toast.error("Please login to access the resources.");
                     return;
                   }
-                  if (isAuthenticated) {
-                    toast.error(
-                      "plase select the appropriate job or internship before analyzing."
-                    );
-                    return;
-                  }
-
-                  setIsMenuOpen(false); 
+                  toast.info(
+                    "Please upload your resume and select the appropriate job or internship before analyzing."
+                  );
                 }}
               >
                 Analyze Resume+
               </Link>
 
               {isAuthenticated ? (
-                <>
+                <div className="space-y-3 pt-2 border-t border-gray-200">
                   <Link
-                    className="text-blue-500 no-underline py-2 border-b border-gray-100 hover:text-blue-700"
                     href="/student/auth/profile"
+                    className="block text-blue-500 hover:text-blue-700 font-medium py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
                   </Link>
                   <Link
-                    className="text-blue-500 no-underline py-2 border-b border-gray-100 hover:text-blue-700"
                     href="/student/auth/resume"
+                    className="block text-blue-500 hover:text-blue-700 font-medium py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Resume
                   </Link>
                   <Link
-                    className="text-blue-500 no-underline py-2 border-b border-gray-100 hover:text-blue-700"
                     href="/student/auth/applied"
+                    className="block text-blue-500 hover:text-blue-700 font-medium py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     My Application
                   </Link>
                   <button
-                    className="bg-blue-500 no-underline hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-left transition-colors duration-200 mt-2"
                     onClick={SignoutHandler}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-full mt-2"
                   >
                     Signout
                   </button>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="space-y-3 pt-2 border-t border-gray-200">
                   <Link
                     href="/"
-                    className="text-blue-500 no-underline py-2 border-b border-gray-100 hover:text-blue-700"
+                    className="block text-blue-500 hover:text-blue-700 font-medium py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Main Page
                   </Link>
-
                   <Link
-                    className="bg-transparent no-underline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded text-center transition-colors duration-200 my-2"
                     href="/student/signin"
+                    className="block border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-medium py-2 px-4 rounded text-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Signin
                   </Link>
                   <Link
-                    className="bg-blue-500 no-underline hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-center transition-colors duration-200"
                     href="/student/signup"
+                    className="block bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-full text-center mt-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Signup
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>
         )}
       </header>
-      <main className="min-h-[calc(100vh-64px)]">{children}</main>
+
+      {/* Main Content */}
+      <main className="flex-grow">
+        {children}
+      </main>
     </div>
   );
 };
