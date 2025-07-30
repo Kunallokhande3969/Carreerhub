@@ -1,114 +1,198 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import {
   asyncapplyjobstudent,
   asyncapplyinternshipstudent,
 } from "@/store/Actions/studentAction";
+import { toast } from "react-toastify";
 
-const Page = () => {
+const JobsPage = () => {
   const { jobs, internships, student } = useSelector(
     (state) => state.studentReducer
   );
   const dispatch = useDispatch();
+  const [appliedJobs, setAppliedJobs] = useState(new Set());
+  const [appliedInternships, setAppliedInternships] = useState(new Set());
 
-  const ApplyJobHandler = (id) => {
-    dispatch(asyncapplyjobstudent(id));
+  // Initialize applied items on component mount
+  useEffect(() => {
+    if (student) {
+      const jobSet = new Set(student.jobs.map((job) => job.toString()));
+      const internshipSet = new Set(
+        student.internships.map((internship) => internship.toString())
+      );
+      setAppliedJobs(jobSet);
+      setAppliedInternships(internshipSet);
+    }
+  }, [student]);
+
+  const ApplyJobHandler = async (id) => {
+    if (appliedJobs.has(id)) {
+      toast.warning("You've already applied to this job");
+      return;
+    }
+
+    try {
+      await dispatch(asyncapplyjobstudent(id));
+      setAppliedJobs((prev) => new Set(prev).add(id));
+      toast.success("Job application submitted successfully!");
+    } catch (error) {
+      toast.error("Failed to apply for job");
+    }
   };
 
-  const ApplyInternshipHandler = (id) => {
-    dispatch(asyncapplyinternshipstudent(id));
+  const ApplyInternshipHandler = async (id) => {
+    if (appliedInternships.has(id)) {
+      toast.warning("You've already applied to this internship");
+      return;
+    }
+
+    try {
+      await dispatch(asyncapplyinternshipstudent(id));
+      setAppliedInternships((prev) => new Set(prev).add(id));
+      toast.success("Internship application submitted successfully!");
+    } catch (error) {
+      toast.error("Failed to apply for internship");
+    }
   };
 
-  useEffect(() => {}, [student]);
+  // Filter out duplicate jobs/internships
+  const uniqueJobs = jobs
+    ? jobs.filter(
+        (job, index, self) => index === self.findIndex((j) => j._id === job._id)
+      )
+    : [];
+
+  const uniqueInternships = internships
+    ? internships.filter(
+        (internship, index, self) =>
+          index === self.findIndex((i) => i._id === internship._id)
+      )
+    : [];
 
   return (
-    <div className="container mt-5 mb-5">
-      <h4>All Available Jobs For {student && student.firstname}</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
-        {jobs &&
-          jobs.map((j) => (
-            <div className="bg-white p-4 rounded-md shadow-md" key={j._id}>
-              <h2 className="text-xl font-semibold">Title -{j.title}</h2>
-              <p className="text-gray-600">
-                <b>Skills</b> {j.skills}
-              </p>
-              <p className="text-gray-600">
-                <b>JobType</b> {j.jobtype}
-              </p>
-              <p className="text-gray-600">
-                <b>Openings</b>:{j.openings}
-              </p>
-              <p className="text-gray-600">
-                <b>Descreption</b> {j.description}
-              </p>
-              <Link
-                className=" fs-sm no-underline me-4"
-                href={`/student/auth/readjob/${j._id}`}
-              >
-                View Details{">"}
-              </Link>
-              {!j.students.includes(student && student._id) ? (
-                <button
-                  onClick={() => ApplyJobHandler(j._id)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Apply Job
-                </button>
-              ) : (
-                <h5 className="inline-block mt-1 px-3 py-2  bg-blue-400 text-white border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  Applied
-                </h5>
-              )}
-            </div>
-          ))}
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-bold mb-6">
+        Available Opportunities for {student?.firstname}
+      </h2>
 
-      <h4>All Available Internships For {student && student.firstname}</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {internships &&
-          internships.map((i) => (
-            <div className="bg-white p-4 rounded-md shadow-md" key={i._id}>
-              <h2 className="text-xl font-semibold">Profile - {i.profile}</h2>
-              <p className="text-gray-600">
-                <b>Skills</b> : {i.skills}
-              </p>
-              <p className="text-gray-600">
-                <b>Type of Internship </b>:{i.internshiptype}
-              </p>
-              <p className="text-gray-600">
-                <b>Openings</b>:{i.openings}
-              </p>
-              <p className="text-gray-600">
-                <b>Duration</b> : {i.duration}
-              </p>
-              {/* <p className="text-gray-600"><b>Responsibility</b> : {i.responsibility}</p> */}
-              {/* <p className="text-gray-600"><b>Stipend</b>: {i.stipend.status}</p>
-              <p className="text-gray-600"><b>Stipend</b>: {i.stipend.amount}</p>
-              <p className="text-gray-600"><b>Perks</b>: {i.perks}</p>
-              <p className="text-gray-600"><b>Assesment</b>: {i.assesments}</p> */}
-              <Link
-                className="fs-sm no-underline me-4"
-                href={`/student/auth/read/${i._id}`}
+      {/* Jobs Section */}
+      <section className="mb-12">
+        <h3 className="text-xl font-semibold mb-4">Available Jobs</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {uniqueJobs.length > 0 ? (
+            uniqueJobs.map((job) => (
+              <div
+                key={job._id}
+                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
               >
-                View Details{">"}
-              </Link>
-              {!i.students.includes(student && student._id) ? (
-                <button
-                  onClick={() => ApplyInternshipHandler(i._id)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Apply Internship
-                </button>
-              ) : (
-                <h5 className="inline-block mt-1 px-3 py-2  text-white border rounded-md shadow-sm focus:ring-blue-500 bg-blue-400 focus:border-blue-500 sm:text-sm">
-                  Applied
-                </h5>
-              )}
-            </div>
-          ))}
-      </div>
+                <h4 className="text-lg font-semibold mb-2">{job.title}</h4>
+                <div className="space-y-2 mb-4">
+                  <p>
+                    <span className="font-medium">Skills:</span> {job.skills}
+                  </p>
+                  <p>
+                    <span className="font-medium">Job Type:</span> {job.jobtype}
+                  </p>
+                  <p>
+                    <span className="font-medium">Openings:</span>{" "}
+                    {job.openings}
+                  </p>
+                  <p className="line-clamp-2">
+                    <span className="font-medium">Description:</span>{" "}
+                    {job.description}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link
+                    href={`/student/auth/readjob/${job._id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    View Details →
+                  </Link>
+                  {appliedJobs.has(job._id) ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                      Applied
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => ApplyJobHandler(job._id)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                    >
+                      Apply Now
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No jobs available at the moment</p>
+          )}
+        </div>
+      </section>
+
+      {/* Internships Section */}
+      <section>
+        <h3 className="text-xl font-semibold mb-4">Available Internships</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {uniqueInternships.length > 0 ? (
+            uniqueInternships.map((internship) => (
+              <div
+                key={internship._id}
+                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <h4 className="text-lg font-semibold mb-2">
+                  {internship.profile}
+                </h4>
+                <div className="space-y-2 mb-4">
+                  <p>
+                    <span className="font-medium">Skills:</span>{" "}
+                    {internship.skills}
+                  </p>
+                  <p>
+                    <span className="font-medium">Type:</span>{" "}
+                    {internship.internshiptype}
+                  </p>
+                  <p>
+                    <span className="font-medium">Openings:</span>{" "}
+                    {internship.openings}
+                  </p>
+                  <p>
+                    <span className="font-medium">Duration:</span>{" "}
+                    {internship.duration}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link
+                    href={`/student/auth/read/${internship._id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    View Details →
+                  </Link>
+                  {appliedInternships.has(internship._id) ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                      Applied
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => ApplyInternshipHandler(internship._id)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                    >
+                      Apply Now
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">
+              No internships available at the moment
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 };
