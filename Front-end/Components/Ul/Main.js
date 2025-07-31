@@ -76,14 +76,14 @@ const Main = () => {
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Background Image */}
-                <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+                {/* Background (with fallback color) */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-gray-200">
                   <Image
                     src={card.src}
                     alt={card.alt}
                     fill
-                    className={`object-cover transition-all duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] ${
-                      hoveredCard === index ? "scale-110" : "scale-100"
+                    className={`object-cover transition-all duration-700 ${
+                      hoveredCard === index ? "scale-105" : "scale-100"
                     }`}
                     loading="lazy"
                     quality={80}
@@ -91,15 +91,15 @@ const Main = () => {
                   />
                 </div>
                 {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-all duration-500 ${
-                  hoveredCard === index ? "opacity-100" : "opacity-90"
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent transition-all duration-500 ${
+                  hoveredCard === index ? "opacity-90" : "opacity-80"
                 }`} />
                 {/* Card Content */}
                 <div className="relative z-10 flex flex-col justify-end p-6 text-white w-full">
-                  <div className={`transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                  <div className={`transition-all duration-500 ${
                     hoveredCard === index
                       ? "translate-y-0 opacity-100"
-                      : "translate-y-8 opacity-90"
+                      : "translate-y-2 opacity-95"
                   }`}>
                     <h3 className="text-xl md:text-2xl font-bold mb-2 whitespace-normal overflow-hidden text-ellipsis">{card.title}</h3>
                     {card.description && (
@@ -108,10 +108,10 @@ const Main = () => {
                       </p>
                     )}
                   </div>
-                  <div className={`flex flex-wrap gap-3 transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                  <div className={`flex flex-wrap gap-3 transition-all duration-500 ${
                     hoveredCard === index
                       ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-4"
+                      : "opacity-0 translate-y-2"
                   }`}>
                     <button
                       onClick={(e) => handleProtectedNav(e, "/student")}
