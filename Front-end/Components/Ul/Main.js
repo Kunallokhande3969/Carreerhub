@@ -28,7 +28,7 @@ const Main = () => {
       alt: "Internship Opportunities",
       title: "International Remote Internship Opportunities",
       description: "Gain real-world experience with top teams & earn up to ₹3 lacs stipend!",
-      primaryAction: "Find Internships",
+      primaryAction: "Internships",
       secondaryAction: "Apply now"
     },
     {
@@ -54,7 +54,7 @@ const Main = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <main className="flex-grow">
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-          {/* Header */}
+          {/* Header Section */}
           <div className="text-center mb-12 md:mb-16">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               <span className="text-blue-600">Career</span>Hub
@@ -66,65 +66,64 @@ const Main = () => {
               Discover opportunities that align with your aspirations and skills
             </p>
           </div>
-          {/* Cards */}
+
+          {/* Cards Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-12">
             {careerCards.map((card, index) => (
               <div
                 key={index}
-                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-500 min-h-[320px] flex"
+                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 min-h-[320px] flex bg-gray-200"
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Background Image with fallback */}
-                <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-gray-200">
-                  <Image
+                {/* Direct Image Link with Fallback */}
+                <div className="absolute inset-0 w-full h-full">
+                  <img
                     src={card.src}
                     alt={card.alt}
-                    fill
-                    className={`object-cover transition-all duration-700 ${
-                      hoveredCard === index ? "scale-105" : "scale-100"
-                    }`}
-                    loading="lazy"
-                    quality={80}
-                    priority={index === 0}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.classList.add('bg-blue-50');
+                    }}
                   />
                 </div>
-                {/* Corrected, less opaque overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent transition-all duration-500 ${
-                  hoveredCard === index ? "opacity-80" : "opacity-60"
-                }`} />
-                {/* Card Content */}
+
+                {/* Lighter Overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent ${
+                  hoveredCard === index ? 'opacity-70' : 'opacity-60'
+                } transition-opacity duration-300`} />
+
+                {/* Content */}
                 <div className="relative z-10 flex flex-col justify-end p-6 text-white w-full">
-                  <div className={`transition-all duration-500 ${
-                    hoveredCard === index
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-2 opacity-95"
+                  <div className={`transition-transform duration-300 ${
+                    hoveredCard === index ? 'translate-y-0' : 'translate-y-4'
                   }`}>
-                    <h3 className="text-xl md:text-2xl font-bold mb-2 whitespace-normal overflow-hidden text-ellipsis">{card.title}</h3>
-                    {card.description && (
-                      <p className="text-sm md:text-base mb-4 whitespace-normal overflow-hidden text-ellipsis">
-                        {card.description}
-                      </p>
-                    )}
+                    <h3 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-md">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm md:text-base mb-4 drop-shadow-md">
+                      {card.description}
+                    </p>
                   </div>
-                  <div className={`flex flex-wrap gap-3 transition-all duration-500 ${
-                    hoveredCard === index
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-2"
+
+                  <div className={`flex gap-3 mt-4 transition-opacity duration-300 ${
+                    hoveredCard === index ? 'opacity-100' : 'opacity-0'
                   }`}>
                     <button
                       onClick={(e) => handleProtectedNav(e, "/student")}
-                      className={`inline-flex items-center font-medium ${
+                      className={`flex-1 py-2 px-4 rounded-full font-medium ${
                         card.isOutline
-                          ? "border-2 border-white text-white hover:bg-white hover:text-black"
-                          : "bg-white text-gray-900 hover:bg-gray-100"
-                      } px-5 py-2 rounded-full transition-colors duration-300`}
+                          ? 'border-2 border-white text-white hover:bg-white hover:text-black'
+                          : 'bg-white text-gray-900 hover:bg-gray-100'
+                      } transition-colors flex items-center justify-center`}
                     >
-                      {card.primaryAction} {!card.isOutline && <FiArrowRight className="ml-1.5" />}
+                      {card.primaryAction}
+                      {!card.isOutline && <FiArrowRight className="ml-2" />}
                     </button>
                     <button
                       onClick={(e) => handleProtectedNav(e, "/apply")}
-                      className="inline-flex items-center font-medium border-2 border-white text-white px-5 py-2 rounded-full hover:bg-white hover:text-black transition-colors duration-300"
+                      className="flex-1 py-2 px-4 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-black transition-colors"
                     >
                       {card.secondaryAction}
                     </button>
@@ -133,13 +132,15 @@ const Main = () => {
               </div>
             ))}
           </div>
+
           {/* CTA Button */}
           <div className="text-center">
             <button
               onClick={(e) => handleProtectedNav(e, "/student")}
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-full text-base md:text-lg hover:from-blue-700 hover:to-blue-600 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-full text-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg"
             >
-              Explore All Opportunities <FiArrowRight className="ml-2" />
+              Explore All Opportunities
+              <FiArrowRight className="ml-2" />
             </button>
           </div>
         </section>
