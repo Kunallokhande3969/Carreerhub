@@ -27,9 +27,10 @@ const Main = () => {
       src: "https://d3atms9ic4lahi.cloudfront.net/banner-images/home_new/int_opps-student.png.webp",
       alt: "Internship Opportunities",
       title: "International Remote Internship Opportunities",
-      description: "Gain real-world experience with top teams & earn up to ₹3 lacs stipend!",
+      description:
+        "Gain real-world experience with top teams & earn up to ₹3 lacs stipend!",
       primaryAction: "Internships",
-      secondaryAction: "Apply now"
+      secondaryAction: "Apply now",
     },
     {
       src: "https://d3atms9ic4lahi.cloudfront.net/banner-images/home_new/exp_hiring-student.png.webp",
@@ -37,17 +38,18 @@ const Main = () => {
       title: "Author/Executor",
       description: "High-profile positions with salaries up to ₹30 LPA",
       primaryAction: "Find Jobs",
-      secondaryAction: "Apply now"
+      secondaryAction: "Apply now",
     },
     {
       src: "https://d3atms9ic4lahi.cloudfront.net/banner-images/home_new/pgc_banner-student.png.webp",
       alt: "Career Development",
       title: "Online Courses with Guaranteed Placement",
-      description: "Upskill with professional development resources and get guaranteed placement assistance.",
+      description:
+        "Upskill with professional development resources and get guaranteed placement assistance.",
       primaryAction: "Know more",
       secondaryAction: "Apply now",
-      isOutline: true
-    }
+      isOutline: true,
+    },
   ];
 
   return (
@@ -60,7 +62,8 @@ const Main = () => {
               <span className="text-blue-600">Career</span>Hub
             </h1>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Make Your <span className="text-blue-600">Dream Career</span> A Reality
+              Make Your <span className="text-blue-600">Dream Career</span> A
+              Reality
             </h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               Discover opportunities that align with your aspirations and skills
@@ -83,22 +86,26 @@ const Main = () => {
                     alt={card.alt}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.classList.add('bg-blue-50');
+                      e.target.style.display = "none";
+                      e.target.parentElement.classList.add("bg-blue-50");
                     }}
                   />
                 </div>
 
                 {/* Lighter Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent ${
-                  hoveredCard === index ? 'opacity-70' : 'opacity-60'
-                } transition-opacity duration-300`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent ${
+                    hoveredCard === index ? "opacity-70" : "opacity-60"
+                  } transition-opacity duration-300`}
+                />
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-end p-6 text-white w-full">
-                  <div className={`transition-transform duration-300 ${
-                    hoveredCard === index ? 'translate-y-0' : 'translate-y-4'
-                  }`}>
+                  <div
+                    className={`transition-transform duration-300 ${
+                      hoveredCard === index ? "translate-y-0" : "translate-y-4"
+                    }`}
+                  >
                     <h3 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-md">
                       {card.title}
                     </h3>
@@ -107,15 +114,17 @@ const Main = () => {
                     </p>
                   </div>
 
-                  <div className={`flex gap-3 mt-4 transition-opacity duration-300 ${
-                    hoveredCard === index ? 'opacity-100' : 'opacity-0'
-                  }`}>
+                  <div
+                    className={`flex gap-3 mt-4 transition-opacity duration-300 ${
+                      hoveredCard === index ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
                     <button
                       onClick={(e) => handleProtectedNav(e, "/student")}
                       className={`flex-1 py-2 px-4 rounded-full font-medium ${
                         card.isOutline
-                          ? 'border-2 border-white text-white hover:bg-white hover:text-black'
-                          : 'bg-white text-gray-900 hover:bg-gray-100'
+                          ? "border-2 border-white text-white hover:bg-white hover:text-black"
+                          : "bg-white text-gray-900 hover:bg-gray-100"
                       } transition-colors flex items-center justify-center`}
                     >
                       {card.primaryAction}
@@ -137,10 +146,10 @@ const Main = () => {
           <div className="text-center">
             <button
               onClick={(e) => handleProtectedNav(e, "/student")}
-              className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-full text-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-semibold rounded-full text-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
             >
               Explore All Opportunities
-              <FiArrowRight className="ml-2" />
+              <FiArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
         </section>
