@@ -8,53 +8,37 @@ const { sendmail } = require("../utiles/nodemailer");
 const imagekit = require("../utiles/imageKit");
 const path = require("path");
 
-exports.homepage = catchAsyncErorrs(async (req, res, next) => {
-  res.json({
-    message: "Secure Homepage !",
-  });
-});
-
-exports.current = catchAsyncErorrs(async (req, res, next) => {
-  const student = await Student.findById(req.id)
-    .populate("jobs")
-    .populate("internships")
-    .exec();
-  if (!student) {
-    return next(new ErorrHandler("Student not found", 404));
-  }
-  res.json(student);
-});
-
-
-
-exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
-  const student = await Student.findOneAndDelete(req.id).exec();
-  res.json({ success: true, student, message: "Deleted user " });
-});
-
 exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
   const student = await new Student(req.body).save();
+  
+  // मैन्युअली पासवर्ड हश करें
+  const salt = bcrypt.genSaltSync(10);
+  student.password = bcrypt.hashSync(req.body.password, salt);
+  await student.save();
+
   sendtoken(student, 200, res);
 });
 
+// SignIn Function
 exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOne({ email: req.body.email })
     .select("+password")
     .exec();
+
   if (!student) {
-    return next(
-      new ErorrHandler("User not found with this email address !", 404)
-    );
+    return next(new ErorrHandler("Invalid credentials", 401));
   }
-  const isMatch = student.comparepassword(req.body.password);
+
+  const isMatch = await student.comparepassword(req.body.password);
   if (!isMatch) {
-    return next(new ErorrHandler("Wrong Password"), 500);
+    return next(new ErorrHandler("Invalid credentials", 401));
   }
-  sendtoken(student, 201, res);
+
+  sendtoken(student, 200, res);
 });
 
+// SignOut Function
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
-
   const options = {
     httpOnly: true,
     secure: true,
@@ -62,11 +46,11 @@ exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
     path: '/',
     domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
   };
-  
+
   res.clearCookie("token", options);
-  res.status(200).json({ 
+  res.status(200).json({
     success: true,
-    message: "Successfully signed out" 
+    message: "Successfully signed out"
   });
 });
 

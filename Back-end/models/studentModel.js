@@ -89,16 +89,14 @@ studentModel.pre("save", function(next){
 });
 
 // Password compare
-studentModel.methods.comparepassword = function(password){
-  return bcrypt.compareSync(password, this.password);
+studentSchema.methods.comparepassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
 };
-
 // Generate JWT token
-studentModel.methods.getjwttoken = function(){
-  return jwt.sign({id: this._id}, process.env.JWT_SECRET , {
+studentSchema.methods.getjwttoken = function() {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
-
 const Student = mongoose.model("student", studentModel);
 module.exports = Student;
