@@ -12,11 +12,14 @@ require("./models/database").connectDatabase();
 
 // ===== CORS =====
 const cors = require("cors");
+// ===== CORS =====
+
 app.use(cors({
-  origin: [
-     "https://carreerhub-skix.vercel.app",
-  ],
-  credentials: true
+  origin: "https://carreerhub-skix.vercel.app",
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie']
 }));
 
 // ===== Body Parsers =====

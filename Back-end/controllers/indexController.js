@@ -25,6 +25,8 @@ exports.current = catchAsyncErorrs(async (req, res, next) => {
   res.json(student);
 });
 
+
+
 exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOneAndDelete(req.id).exec();
   res.json({ success: true, student, message: "Deleted user " });
@@ -35,34 +37,33 @@ exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
   sendtoken(student, 200, res);
 });
 
-exports.studentsignin = catchAsyncErrors(async (req, res, next) => {
-  // ...लॉगिन लॉजिक
-  
-  const token = generateToken(student._id);
-
-  res.cookie("token", token, {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 दिन
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
-  });
-
-  res.status(200).json({ success: true, token, student });
+exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
+  const student = await Student.findOne({ email: req.body.email })
+    .select("+password")
+    .exec();
+  if (!student) {
+    return next(
+      new ErorrHandler("User not found with this email address !", 404)
+    );
+  }
+  const isMatch = student.comparepassword(req.body.password);
+  if (!isMatch) {
+    return next(new ErorrHandler("Wrong Password"), 500);
+  }
+  sendtoken(student, 201, res);
 });
 
+exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
 
-
-exports.studentsignout = catchAsyncErrors(async (req, res, next) => {
-  res.clearCookie("token", {
+  const options = {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
     path: '/',
     domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
-  });
+  };
   
+  res.clearCookie("token", options);
   res.status(200).json({ 
     success: true,
     message: "Successfully signed out" 
