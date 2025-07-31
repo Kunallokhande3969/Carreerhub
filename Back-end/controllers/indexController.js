@@ -19,8 +19,12 @@ exports.current = catchAsyncErorrs(async (req, res, next) => {
     .populate("jobs")
     .populate("internships")
     .exec();
+  if (!student) {
+    return next(new ErorrHandler("Student not found", 404));
+  }
   res.json(student);
 });
+
 
 
 exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
