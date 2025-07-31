@@ -75,16 +75,18 @@ const Main = () => {
             {careerCards.map((card, index) => (
               <div
                 key={index}
-                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 min-h-[320px] flex bg-gray-200"
+                className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] min-h-[320px] flex bg-gray-200 transform hover:scale-[1.02] will-change-transform"
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Direct Image Link with Fallback */}
-                <div className="absolute inset-0 w-full h-full">
+                {/* Image Container with Smooth Scale Effect */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden">
                   <img
                     src={card.src}
                     alt={card.alt}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.15,0.75,0.5,1)] ${
+                      hoveredCard === index ? "scale-110" : "scale-100"
+                    }`}
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.parentElement.classList.add("bg-blue-50");
@@ -92,47 +94,52 @@ const Main = () => {
                   />
                 </div>
 
-                {/* Lighter Overlay */}
+                {/* Gradient Overlay with Smooth Transition */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent ${
-                    hoveredCard === index ? "opacity-70" : "opacity-60"
-                  } transition-opacity duration-300`}
+                  className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent transition-all duration-500 ${
+                    hoveredCard === index ? "opacity-80" : "opacity-60"
+                  }`}
                 />
 
-                {/* Content */}
+                {/* Content with Smooth Transitions */}
                 <div className="relative z-10 flex flex-col justify-end p-6 text-white w-full">
                   <div
-                    className={`transition-transform duration-300 ${
-                      hoveredCard === index ? "translate-y-0" : "translate-y-4"
+                    className={`transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                      hoveredCard === index ? "translate-y-0" : "translate-y-6"
                     }`}
                   >
                     <h3 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-md">
                       {card.title}
                     </h3>
-                    <p className="text-sm md:text-base mb-4 drop-shadow-md">
+                    <p className="text-sm md:text-base mb-4 drop-shadow-md opacity-90">
                       {card.description}
                     </p>
                   </div>
 
+                  {/* Buttons with Staggered Animation */}
                   <div
-                    className={`flex gap-3 mt-4 transition-opacity duration-300 ${
-                      hoveredCard === index ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`flex gap-3 mt-4 ${
+                      hoveredCard === index
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-4"
+                    } transition-all duration-300 ease-out delay-75`}
                   >
                     <button
                       onClick={(e) => handleProtectedNav(e, "/student")}
-                      className={`flex-1 py-2 px-4 rounded-full font-medium ${
+                      className={`flex-1 py-2 px-4 rounded-full font-medium transition-all duration-300 ${
                         card.isOutline
                           ? "border-2 border-white text-white hover:bg-white hover:text-black"
                           : "bg-white text-gray-900 hover:bg-gray-100"
-                      } transition-colors flex items-center justify-center`}
+                      } transform hover:scale-105 flex items-center justify-center`}
                     >
                       {card.primaryAction}
-                      {!card.isOutline && <FiArrowRight className="ml-2" />}
+                      {!card.isOutline && (
+                        <FiArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                      )}
                     </button>
                     <button
                       onClick={(e) => handleProtectedNav(e, "/apply")}
-                      className="flex-1 py-2 px-4 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-black transition-colors"
+                      className="flex-1 py-2 px-4 rounded-full font-medium border-2 border-white text-white hover:bg-white hover:text-black transition-all duration-300 transform hover:scale-105"
                     >
                       {card.secondaryAction}
                     </button>
