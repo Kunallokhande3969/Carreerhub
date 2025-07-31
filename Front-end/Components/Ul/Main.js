@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import Image from "next/image"; // Next.js optimized Image
+import Image from "next/image";
 
 const Main = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -66,7 +66,6 @@ const Main = () => {
               Discover opportunities that align with your aspirations and skills
             </p>
           </div>
-
           {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-12">
             {careerCards.map((card, index) => (
@@ -76,7 +75,7 @@ const Main = () => {
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Background (with fallback color) */}
+                {/* Background Image with fallback */}
                 <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-gray-200">
                   <Image
                     src={card.src}
@@ -90,9 +89,9 @@ const Main = () => {
                     priority={index === 0}
                   />
                 </div>
-                {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent transition-all duration-500 ${
-                  hoveredCard === index ? "opacity-90" : "opacity-80"
+                {/* Corrected, less opaque overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent transition-all duration-500 ${
+                  hoveredCard === index ? "opacity-80" : "opacity-60"
                 }`} />
                 {/* Card Content */}
                 <div className="relative z-10 flex flex-col justify-end p-6 text-white w-full">
@@ -134,7 +133,6 @@ const Main = () => {
               </div>
             ))}
           </div>
-
           {/* CTA Button */}
           <div className="text-center">
             <button
