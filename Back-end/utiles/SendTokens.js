@@ -6,9 +6,10 @@ exports.sendtoken = (employe, statusCode, res) => {
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    // secure : true
+    secure: process.env.NODE_ENV === "production",  // Production me secure true rakhein
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Cross-site cookie ke liye "none" (https chahiye)
   };
-  //  
+
   res
     .status(statusCode)
     .cookie("token", token, options)
