@@ -55,7 +55,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center py-4 space-x-6">
             <Link 
               href="/jobs" 
               onClick={(e) => handleProtectedNav(e, "/jobs")}
