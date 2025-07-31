@@ -56,8 +56,20 @@ exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
 });
 
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
-  res.clearCookie("token");
-  res.json({ message: "succefully signout" });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' 
+      ? '.onrender.com'  
+      : undefined        
+  });
+  
+  res.status(200).json({ 
+    success: true,
+    message: "Successfully signed out" 
+  });
 });
 
 exports.studentsendmail = catchAsyncErorrs(async (req, res, next) => {
