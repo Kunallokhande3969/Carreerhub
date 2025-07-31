@@ -7,6 +7,7 @@ const { sendtoken } = require("../utiles/SendTokens");
 const { sendmail } = require("../utiles/nodemailer");
 const imagekit = require("../utiles/imageKit");
 const path = require("path");
+ 
 
 exports.homepage = catchAsyncErorrs(async (req, res, next) => {
   res.json({
@@ -58,19 +59,13 @@ exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' 
-      ? '.onrender.com'  
-      : undefined        
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/",  
   });
-  
-  res.status(200).json({ 
-    success: true,
-    message: "Successfully signed out" 
-  });
+  res.json({ message: "Successfully signed out" });
 });
+
 
 exports.studentsendmail = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOne({ email: req.body.email }).exec();
