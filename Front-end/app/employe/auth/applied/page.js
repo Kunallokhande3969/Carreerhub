@@ -46,7 +46,7 @@ const Page = () => {
             Welcome, <span className="text-blue-600">{employe?.firstname}</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Manage all your job postings and internships in one place
+              Manage all your job postings and internships in one place
           </p>
         </motion.header>
 
