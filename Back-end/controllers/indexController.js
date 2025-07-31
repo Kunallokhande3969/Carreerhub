@@ -9,35 +9,41 @@ const imagekit = require("../utiles/imageKit");
 const path = require("path");
 
 exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
-  const student = await new Student(req.body).save();
+  const { password, ...rest } = req.body;
   
-  // मैन्युअली पासवर्ड हश करें
-  const salt = bcrypt.genSaltSync(10);
-  student.password = bcrypt.hashSync(req.body.password, salt);
-  await student.save();
+  // Manual Hashing with Salting
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  
+  const student = await new Student({
+    ...rest,
+    password: hashedPassword
+  }).save();
 
-  sendtoken(student, 200, res);
+  sendtoken(student, 201, res);
 });
 
-// SignIn Function
+// SignIn with Proper Credential Verification
 exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
-  const student = await Student.findOne({ email: req.body.email })
+  const { email, password } = req.body;
+
+  const student = await Student.findOne({ email })
     .select("+password")
     .exec();
 
   if (!student) {
-    return next(new ErorrHandler("Invalid credentials", 401));
+    return next(new ErrorHandler("Invalid credentials", 401));
   }
 
-  const isMatch = await student.comparepassword(req.body.password);
+  const isMatch = await bcrypt.compare(password, student.password);
   if (!isMatch) {
-    return next(new ErorrHandler("Invalid credentials", 401));
+    return next(new ErrorHandler("Invalid credentials", 401));
   }
 
   sendtoken(student, 200, res);
 });
 
-// SignOut Function
+// SignOut with Render.com Compatible Cookie Clearing
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
   const options = {
     httpOnly: true,

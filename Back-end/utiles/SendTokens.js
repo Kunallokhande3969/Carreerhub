@@ -1,5 +1,5 @@
 const sendtoken = (user, statusCode, res) => {
-  const token = user.getjwttoken();
+  const token = user.getJwtToken();
   
   const options = {
     expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
@@ -10,9 +10,21 @@ const sendtoken = (user, statusCode, res) => {
     domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
   };
 
-  res.status(statusCode).cookie("token", token, options).json({
-    success: true,
-    user,
-    token
-  });
+
+  const userData = {
+    _id: user._id,
+    email: user.email,
+    firstname: user.firstname,
+    lastname: user.lastname
+  };
+
+  res.status(statusCode)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      token,
+      user: userData
+    });
 };
+
+module.exports = { sendtoken };

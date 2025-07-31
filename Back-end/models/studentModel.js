@@ -79,23 +79,20 @@ const studentModel = new mongoose.Schema({
 }, {timestamps: true});
 
 // Hash password before save
-studentModel.pre("save", function(next){
-  if(!this.isModified("password")){
-    return next();
-  }
-  const salt = bcrypt.genSaltSync(10);
-  this.password = bcrypt.hashSync(this.password, salt);
+studentSchema.pre("save", async function(next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // Password compare
-studentSchema.methods.comparepassword = async function(password) {
+studentSchema.methods.comparePassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
 // Generate JWT token
-studentSchema.methods.getjwttoken = function() {
+studentSchema.methods.getJwtToken = function() {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+    expiresIn: process.env.JWT_EXPIRE || '24h'
   });
 };
 const Student = mongoose.model("student", studentModel);
