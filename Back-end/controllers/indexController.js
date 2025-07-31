@@ -7,7 +7,6 @@ const { sendtoken } = require("../utiles/SendTokens");
 const { sendmail } = require("../utiles/nodemailer");
 const imagekit = require("../utiles/imageKit");
 const path = require("path");
- 
 
 exports.homepage = catchAsyncErorrs(async (req, res, next) => {
   res.json({
@@ -26,8 +25,6 @@ exports.current = catchAsyncErorrs(async (req, res, next) => {
   res.json(student);
 });
 
-
-
 exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOneAndDelete(req.id).exec();
   res.json({ success: true, student, message: "Deleted user " });
@@ -38,34 +35,39 @@ exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
   sendtoken(student, 200, res);
 });
 
-exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
-  const student = await Student.findOne({ email: req.body.email })
-    .select("+password")
-    .exec();
-  if (!student) {
-    return next(
-      new ErorrHandler("User not found with this email address !", 404)
-    );
-  }
+exports.studentsignin = catchAsyncErrors(async (req, res, next) => {
+  // ...लॉगिन लॉजिक
+  
+  const token = generateToken(student._id);
 
-  const isMatch = student.comparepassword(req.body.password);
+  res.cookie("token", token, {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 दिन
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+  });
 
-  if (!isMatch) {
-    return next(new ErorrHandler("Wrong Password"), 500);
-  }
-  sendtoken(student, 201, res);
+  res.status(200).json({ success: true, token, student });
 });
 
-exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
+
+
+exports.studentsignout = catchAsyncErrors(async (req, res, next) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/",  
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
   });
-  res.json({ message: "Successfully signed out" });
+  
+  res.status(200).json({ 
+    success: true,
+    message: "Successfully signed out" 
+  });
 });
-
 
 exports.studentsendmail = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOne({ email: req.body.email }).exec();

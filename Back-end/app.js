@@ -33,7 +33,7 @@ app.use(
   session({
     resave: true,
     saveUninitialized: true,
-    secret: process.env.EXPRESS_SESSION_SECRETE || "defaultsecret",
+    secret: process.env.EXPRESS_SESSION_SECRET || "defaultsecret",
   })
 );
 
