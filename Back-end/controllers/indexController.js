@@ -8,56 +8,51 @@ const { sendmail } = require("../utiles/nodemailer");
 const imagekit = require("../utiles/imageKit");
 const path = require("path");
 
-exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
-  const { password, ...rest } = req.body;
-  
-  // Manual Hashing with Salting
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  
-  const student = await new Student({
-    ...rest,
-    password: hashedPassword
-  }).save();
-
-  sendtoken(student, 201, res);
+exports.homepage = catchAsyncErorrs(async (req, res, next) => {
+  res.json({
+    message: "Secure Homepage !",
+  });
 });
 
-// SignIn with Proper Credential Verification
-exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
-  const { email, password } = req.body;
-
-  const student = await Student.findOne({ email })
-    .select("+password")
+exports.current = catchAsyncErorrs(async (req, res, next) => {
+  const student = await Student.findById(req.id)
+    .populate("jobs")
+    .populate("internships")
     .exec();
+  res.json(student);
+});
 
-  if (!student) {
-    return next(new ErrorHandler("Invalid credentials", 401));
-  }
+exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
+  const student = await Student.findOneAndDelete(req.id).exec();
+  res.json({ success: true, student, message: "Deleted user " });
+});
 
-  const isMatch = await bcrypt.compare(password, student.password);
-  if (!isMatch) {
-    return next(new ErrorHandler("Invalid credentials", 401));
-  }
-
+exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {
+  const student = await new Student(req.body).save();
   sendtoken(student, 200, res);
 });
 
-// SignOut with Render.com Compatible Cookie Clearing
-exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
-  };
+exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
+  const student = await Student.findOne({ email: req.body.email })
+    .select("+password")
+    .exec();
+  if (!student) {
+    return next(
+      new ErorrHandler("User not found with this email address !", 404)
+    );
+  }
 
-  res.clearCookie("token", options);
-  res.status(200).json({
-    success: true,
-    message: "Successfully signed out"
-  });
+  const isMatch = student.comparepassword(req.body.password);
+
+  if (!isMatch) {
+    return next(new ErorrHandler("Wrong Password"), 500);
+  }
+  sendtoken(student, 201, res);
+});
+
+exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
+  res.clearCookie("token");
+  res.json({ message: "succefully signout" });
 });
 
 exports.studentsendmail = catchAsyncErorrs(async (req, res, next) => {
