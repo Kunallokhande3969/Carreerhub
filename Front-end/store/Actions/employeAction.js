@@ -43,6 +43,7 @@ export const asynctemployesignin = (employe) => async (dispatch, getState) => {
 export const asynctemployesignout = () => async (dispatch, getState) => {
   try {
     await axios.get("/employe/signout");
+    localStorage.removeItem("authToken"); // Remove token on logout
     dispatch(removeemploye());
   } catch (error) {
     dispatch(iserorr(getErrorMessage(error)));
