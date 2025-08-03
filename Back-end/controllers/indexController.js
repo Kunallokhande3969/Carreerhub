@@ -1,4 +1,3 @@
-
 const { catchAsyncErorrs } = require("../middlewares/catchAsyncErorrs");
 const Internship = require("../models/internshipModel");
 const Job = require("../models/jobModel");
@@ -26,11 +25,6 @@ exports.current = catchAsyncErorrs(async (req, res, next) => {
 exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
   const student = await Student.findOneAndDelete(req.id).exec();
   res.json({ success: true, student, message: "Deleted user " });
-});
-
-exports.employesignout = catchAsyncErorrs(async (req, res, next) => {
-  res.clearCookie("token");
-  res.json({ message: "succefully signout" });
 });
 
 exports.studentsignup = catchAsyncErorrs(async (req, res, next) => {

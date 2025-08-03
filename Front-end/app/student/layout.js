@@ -55,7 +55,6 @@ const StudentLayout = ({ children }) => {
   }, [erorrs, dispatch]);
 
   const SignoutHandler = () => {
-    localStorage.removeItem("authToken");
     dispatch(asynctstudentsignout());
     toast.success("You have signed out successfully!", {
       toastId: "signout-success",
@@ -66,9 +65,6 @@ const StudentLayout = ({ children }) => {
       closeOnClick: true,
     });
     setIsMenuOpen(false);
-    setTimeout(() => {
-      window.location.href = "/student/signin";
-    }, 1000);
   };
 
   const toggleMenu = () => {
