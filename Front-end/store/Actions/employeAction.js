@@ -45,6 +45,7 @@ export const asynctemployesignout = () => async (dispatch, getState) => {
     await axios.get("/employe/signout");
     localStorage.removeItem("authToken"); // Remove token on logout
     dispatch(removeemploye());
+    window.location.href = "/employe/signin"; // Redirect to login page
   } catch (error) {
     dispatch(iserorr(getErrorMessage(error)));
   }

@@ -68,6 +68,7 @@ const EmployeAuth = ({ children }) => {
   }, [erorrs, dispatch, hasInitialErrors]);
 
   const SignoutHandler = () => {
+    localStorage.removeItem("authToken");
     dispatch(asynctemployesignout());
     toast.success("You have signed out successfully!", { 
       toastId: "signout-success",
@@ -77,6 +78,9 @@ const EmployeAuth = ({ children }) => {
       draggable: true,
       className: 'toast-message'
     });
+    setTimeout(() => {
+      window.location.href = "/employe/signin";
+    }, 1000);
   };
 
   // Only render content if authenticated
