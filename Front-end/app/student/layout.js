@@ -55,7 +55,7 @@ const StudentLayout = ({ children }) => {
   }, [erorrs, dispatch]);
 
   const SignoutHandler = () => {
-    dispatch(asynctstudentsignout(router));
+    dispatch(asynctstudentsignout());
     toast.success("You have signed out successfully!", {
       toastId: "signout-success",
       autoClose: 5000,

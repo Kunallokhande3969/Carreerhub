@@ -1,435 +1,272 @@
-import axios from "@/utiles/axios";
+"use client";
+import React, { useEffect, useState } from "react";
+import { FcBriefcase } from "react-icons/fc";
+import { FiMenu, FiX } from "react-icons/fi";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  addstudent,
-  removestudent,
-  iserorr,
-  removerorr,
-  addjobs,
-  addinternships,
-  
-  
-} from "../Reducers/studentReducer";
+  asynccurrentemploye,
+  asynctemployesignout,
+} from "@/store/Actions/employeAction";
+import { useRouter } from "next/navigation";
+import { removerorr } from "@/store/Reducers/employeReducer";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+const EmployeLayout = ({ children }) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasInitialErrors, setHasInitialErrors] = useState(false);
 
-const getErrorMessage = (error, fallback = "Something went wrong") => {
-  return error?.response?.data?.message || error?.message || fallback;
-};
+  const { erorrs, isAuthenticated } = useSelector(
+    (state) => state.employeReducer
+  );
 
-export const asynccurrentstudent = () => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student");
-    dispatch(addstudent(data));
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Failed to fetch student")));
-    if (process.env.NODE_ENV === "development") {
-      console.error("Student fetch error:", error);
+  useEffect(() => {
+    dispatch(asynccurrentemploye());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/employe/auth");
     }
-  }
-};
+  }, [isAuthenticated, router]);
 
-export const asynctstudentsignup = (student) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/signup", student);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Signup failed")));
-  }
-};
+  useEffect(() => {
+    if (erorrs && erorrs.length > 0) {
+      toast.dismiss();
+      erorrs.forEach((err) => {
+        toast.error(err, {
+          toastId: err,
+          autoClose: 5000,
+          position: "top-right",
+          pauseOnHover: true,
+          draggable: true,
+          closeOnClick: false,
+          delay: hasInitialErrors ? 0 : 300,
+        });
 
-export const asynctstudentsignin = (student) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/signin", student);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Signin failed")));
-  }
-};
+        if (err?.includes("Please log in to access the resources")) {
+          dispatch(removerorr());
+        }
+      });
 
-export const asynctstudentsignout = (router) => async (dispatch) => {
-  try {
-    await axios.get("/student/signout");
-    // Remove token from localStorage if used
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
+      if (!hasInitialErrors) {
+        setHasInitialErrors(true);
+      }
+      dispatch(removerorr());
     }
-    dispatch(removestudent());
-    // Optionally redirect to signin page if router is provided
-    if (router) {
-      router.push("/student/signin");
-    }
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Signout failed")));
-  }
-};
+  }, [erorrs, dispatch, hasInitialErrors]);
 
-export const asynctstudentupdate =
-  (updatedData) => async (dispatch, getState) => {
-    try {
-      const { _id } = getState().studentReducer.student;
-      const { data } = await axios.post(`/student/update/${_id}`, updatedData);
-      dispatch(asynccurrentstudent());
-      if (typeof toast !== "undefined")
-        toast.success("Profile updated successfully!");
-    } catch (error) {
-      if (typeof toast !== "undefined")
-        toast.error(getErrorMessage(error, "Failed to update profile"));
-    }
+  const SignoutHandler = () => {
+    dispatch(asynctemployesignout());
+    toast.success("You have signed out successfully!", {
+      toastId: "signout-success",
+      autoClose: 5000,
+      position: "top-right",
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setMobileMenuOpen(false);
   };
 
-export const asyncstudentavatar = (avatar) => async (dispatch, getState) => {
-  try {
-    const { _id } = getState().studentReducer.student;
-    const { data } = await axios.post("/student/avatar/" + _id, avatar);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Avatar upload failed")));
-    console.log(error);
-  }
-};
-
-export const asyncstudentresetpassword =
-  (password) => async (dispatch, getState) => {
-    try {
-      const { _id } = getState().studentReducer.student;
-      const { data } = await axios.post(
-        "/student/reset-password/" + _id,
-        password
-      );
-      dispatch(asynccurrentstudent());
-    } catch (error) {
-      dispatch(iserorr(getErrorMessage(error, "Password reset failed")));
-      console.log(error);
-    }
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
-export const asyncstudentforgetpassword =
-  (email) => async (dispatch) => {
-    try {
-      const { data } = await axios.post("/student/send-mail/", email);
-      dispatch(asynccurrentstudent());
-    } catch (error) {
-      dispatch(iserorr(getErrorMessage(error, "Forgot password failed")));
-      console.log(error);
-    }
-  };
+  return (
+    <>
+      {/* Header */}
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo/Brand */}
+            <div className="flex items-center space-x-2">
+              <FcBriefcase className="text-3xl" />
+              <h1 className="text-xl font-bold text-gray-800">
+                <span className="text-blue-600">Career</span>Hub
+              </h1>
+            </div>
 
-export const asyncstudentotppassword = (pwd) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/forget-link/", pwd);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "OTP password failed")));
-    console.log(error);
-  }
+            {/* Mobile menu button - only visible on small screens */}
+            <div className="md:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-colors"
+                aria-expanded={mobileMenuOpen}
+                aria-label="Toggle navigation"
+              >
+                {mobileMenuOpen ? (
+                  <FiX className="h-6 w-6" />
+                ) : (
+                  <FiMenu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+
+            {/* Desktop Navigation - hidden on mobile */}
+            <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
+              <Link
+                href={isAuthenticated ? "/employe/auth" : "/employe"}
+                className="px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 no-underline"
+              >
+                Home
+              </Link>
+              
+              <div className="relative group">
+                <div className="flex items-center px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 cursor-pointer transition-colors duration-200">
+                  Online Trainings
+                  <span className="ml-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                    OFFER
+                  </span>
+                </div>
+              </div>
+              
+              <Link
+                href="#"
+                className="px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 no-underline"
+              >
+                Fresher Jobs
+              </Link>
+
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/employe/auth/profile"
+                    className="px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 no-underline"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href="/employe/auth/applied"
+                    className="px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 no-underline"
+                  >
+                    My Applications
+                  </Link>
+                  <button
+                    onClick={SignoutHandler}
+                    className="ml-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200 text-sm lg:text-base"
+                  >
+                    Signout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/"
+                    className="px-3 py-2 text-sm lg:text-base font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  >
+                    Main Page
+                  </Link>
+                  <Link
+                    href="/employe/signin"
+                    className="border border-blue-500 text-blue-600 font-semibold px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white transition-all duration-200 text-sm lg:text-base"
+                  >
+                    Signin
+                  </Link>
+                  <Link
+                    href="/employe/signup"
+                    className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200 text-sm lg:text-base"
+                  >
+                    Signup
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+
+          {/* Mobile Navigation - only visible when menu is open */}
+          {mobileMenuOpen && (
+            <div className="md:hidden pb-4 transition-all duration-300 ease-in-out">
+              <div className="flex flex-col space-y-1 mt-2">
+                <Link
+                  href={isAuthenticated ? "/employe/auth" : "/employe"}
+                  className="px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                
+                <div className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors">
+                  Online Trainings
+                  <span className="ml-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                    OFFER
+                  </span>
+                </div>
+                
+                <Link
+                  href="#"
+                  className="px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Fresher Jobs
+                </Link>
+
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/employe/auth/profile"
+                      className="px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      href="/employe/auth/applied"
+                      className="px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Applications
+                    </Link>
+                    <button
+                      onClick={SignoutHandler}
+                      className="w-full text-left px-3 py-3 rounded-md text-base font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors mt-2"
+                    >
+                      Signout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/"
+                      className="px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Main Page
+                    </Link>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <Link
+                        href="/employe/signin"
+                        className="px-3 py-3 rounded-md text-base font-medium border border-blue-500 text-blue-600 hover:bg-blue-50 text-center transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Signin
+                      </Link>
+                      <Link
+                        href="/employe/signup"
+                        className="px-3 py-3 rounded-md text-base font-medium bg-blue-600 text-white hover:bg-blue-700 text-center transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Signup
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {children}
+        </div>
+      </main>
+    </>
+  );
 };
 
-export const asyncalljobs = () => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/alljob/");
-    dispatch(addjobs(data.job));
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Fetch jobs failed")));
-    console.log(error);
-  }
-};
-
-export const asyncallinternships = () => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/allinternship/");
-    dispatch(addinternships(data.internship));
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Fetch internships failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteavatar = () => async (dispatch, getState) => {
-  const { student } = getState().studentReducer;
-  if (!student?._id) {
-    throw new Error("Student not found");
-  }
-  try {
-    await axios.delete(`/student/avatar/${student._id}`);
-    dispatch(asynccurrentstudent());
-    if (typeof toast !== "undefined")
-      toast.success("Avatar deleted successfully!");
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Failed to delete avatar")));
-    console.log(error);
-  }
-};
-
-export const asyncapplyjobstudent = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/student/apply/job/" + id);
-    dispatch(asynccurrentstudent());
-    dispatch(asyncalljobs());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Apply job failed")));
-    console.log(error);
-  }
-};
-
-export const asyncapplyinternshipstudent =
-  (id) => async (dispatch) => {
-    try {
-      const { data } = await axios.post("/student/apply/internship/" + id);
-      dispatch(asynccurrentstudent());
-      dispatch(asyncallinternships());
-    } catch (error) {
-      dispatch(iserorr(getErrorMessage(error, "Apply internship failed")));
-      console.log(error);
-    }
-  };
-
-export const asysnaddeducation = (edu) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-edu", edu);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add education failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteeducation = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-edu/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete education failed")));
-    console.log(error);
-  }
-};
-
-export const asyncediteducation = (id, edu) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-edu/" + id, edu);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit education failed")));
-    console.log(error);
-  }
-};
-
-export const asysnaddjob = (job) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-job", job);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add job failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeletejob = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-job/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete job failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditjob = (id, job) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-job/" + id, job);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit job failed")));
-    console.log(error);
-  }
-};
-
-export const asysnaddinternship = (intern) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-intern", intern);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add internship failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteinternship = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-intern/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete internship failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditinternship =
-  (id, intern) => async (dispatch) => {
-    try {
-      const { data } = await axios.post("/resume/edit-intern/" + id, intern);
-      dispatch(asynccurrentstudent());
-    } catch (error) {
-      dispatch(iserorr(getErrorMessage(error, "Edit internship failed")));
-      console.log(error);
-    }
-  };
-
-//================================ responbility resume ==========================
-
-export const asysnaddresponsibility = (resp) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-resp", resp);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add responsibility failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteresponsebility = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-resp/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete responsibility failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditresponsibility =
-  (id, resp) => async (dispatch) => {
-    try {
-      const { data } = await axios.post("/resume/edit-resp/" + id, resp);
-      dispatch(asynccurrentstudent());
-    } catch (error) {
-      dispatch(iserorr(getErrorMessage(error, "Edit responsibility failed")));
-      console.log(error);
-    }
-  };
-
-// ==========================course resume ===================
-
-export const asysnaddcourse = (course) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-course", course);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add course failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeletecourse = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-course/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete course failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditcourse = (id, course) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-course/" + id, course);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit course failed")));
-    console.log(error);
-  }
-};
-
-// ========================project resume =====================================
-
-export const asysnaddproject = (proj) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-proj", proj);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add project failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteproject = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-proj/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete project failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditproject = (id, proj) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-proj/" + id, proj);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit project failed")));
-    console.log(error);
-  }
-};
-
-// ================================ skills resume==========================
-
-export const asysnaddskills = (skill) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-skill", skill);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add skill failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteskills = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-skill/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete skill failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditskills = (id, skill) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-skill/" + id, skill);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit skill failed")));
-    console.log(error);
-  }
-};
-
-//========================ACMP resume ==================
-
-export const asysnaddacmp = (acmp) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/add-acmp", acmp);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Add ACMP failed")));
-    console.log(error);
-  }
-};
-
-export const asyncdeleteacmp = (id) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/delete-acmp/" + id);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Delete ACMP failed")));
-    console.log(error);
-  }
-};
-
-export const asynceditacmp = (id, acmp) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/resume/edit-acmp/" + id, acmp);
-    dispatch(asynccurrentstudent());
-  } catch (error) {
-    dispatch(iserorr(getErrorMessage(error, "Edit ACMP failed")));
-    console.log(error);
-  }
-};
+export default EmployeLayout;

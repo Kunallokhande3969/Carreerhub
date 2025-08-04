@@ -45,18 +45,10 @@ export const asynctstudentsignin = (student) => async (dispatch) => {
   }
 };
 
-export const asynctstudentsignout = (router) => async (dispatch) => {
+export const asynctstudentsignout = () => async (dispatch) => {
   try {
-    await axios.get("/student/signout");
-    // Remove token from localStorage if used
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
-    }
+    const { data } = await axios.get("/student/signout");
     dispatch(removestudent());
-    // Optionally redirect to signin page if router is provided
-    if (router) {
-      router.push("/student/signin");
-    }
   } catch (error) {
     dispatch(iserorr(getErrorMessage(error, "Signout failed")));
   }
