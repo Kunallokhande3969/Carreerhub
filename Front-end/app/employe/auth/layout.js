@@ -67,17 +67,8 @@ const EmployeAuth = ({ children }) => {
     }
   }, [erorrs, dispatch, hasInitialErrors]);
 
- const SignoutHandler = async () => {
-  try {
-    // 1. Call backend signout
-    await dispatch(asynctemployesignout());
-    
-    // 2. Clear client-side storage
-    localStorage.removeItem('persist:root'); // If using redux-persist
-    localStorage.removeItem('authToken');
-    sessionStorage.clear();
-    
-    // 3. Show success message
+  const SignoutHandler = () => {
+    dispatch(asynctemployesignout());
     toast.success("You have signed out successfully!", { 
       toastId: "signout-success",
       autoClose: 5000,
@@ -86,19 +77,7 @@ const EmployeAuth = ({ children }) => {
       draggable: true,
       className: 'toast-message'
     });
-    
-    // 4. Force redirect after delay (let toast show)
-    setTimeout(() => {
-      window.location.href = '/login'; // Full page refresh
-    }, 1000);
-    
-  } catch (error) {
-    toast.error("Signout failed. Please try again.", {
-      toastId: "signout-error",
-      autoClose: 5000
-    });
-  }
-};
+  };
 
   // Only render content if authenticated
   if (!isAuthenticated) {
