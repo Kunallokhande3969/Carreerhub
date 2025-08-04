@@ -40,10 +40,16 @@ export const asynctemployesignin = (employe) => async (dispatch, getState) => {
   }
 };
 
-export const asynctemployesignout = () => async (dispatch, getState) => {
+export const asynctemployesignout = (router) => async (dispatch, getState) => {
   try {
     await axios.get("/employe/signout");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+    }
     dispatch(removeemploye());
+    if (router) {
+      router.push("/employe/signin");
+    }
   } catch (error) {
     dispatch(iserorr(getErrorMessage(error)));
   }

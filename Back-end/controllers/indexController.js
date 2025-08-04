@@ -51,7 +51,12 @@ exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
 });
 
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/"
+  });
   res.json({ message: "succefully signout" });
 });
 
