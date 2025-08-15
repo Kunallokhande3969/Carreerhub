@@ -90,7 +90,7 @@ employeModel.methods.comparepassword = function(password){
 
 }
 
-employeModel.methods.getjwttoken = function(){
+employeModel.methods.getJwtToken = function(){
 
     return jwt.sign({id : this._id} , process.env.JWT_SECRET , {
 
@@ -99,7 +99,6 @@ employeModel.methods.getjwttoken = function(){
     })
 
 }
-
 const Employe = mongoose.model("employe", employeModel);
 
 module.exports = Employe;

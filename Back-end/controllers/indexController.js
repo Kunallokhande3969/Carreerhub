@@ -58,6 +58,9 @@ exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
     path: "/",
   };
 
+  if (process.env.COOKIE_DOMAIN)
+    cookieOptions.domain = process.env.COOKIE_DOMAIN;
+
   // Clear the cookie with the same options used when setting it so the browser removes it
   res.clearCookie("token", cookieOptions);
   res.status(200).json({ message: "successfully signout" });

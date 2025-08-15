@@ -70,6 +70,8 @@ exports.employesignout = catchAsyncErorrs(async(req,res,next)=>{
     path: '/',
   };
 
+  if (process.env.COOKIE_DOMAIN) cookieOptions.domain = process.env.COOKIE_DOMAIN;
+
   res.clearCookie("token", cookieOptions);
   res.status(200).json({ message: "successfully signout" });
 });
