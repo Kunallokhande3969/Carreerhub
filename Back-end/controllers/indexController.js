@@ -23,7 +23,7 @@ exports.current = catchAsyncErorrs(async (req, res, next) => {
 });
 
 exports.deletestudent = catchAsyncErorrs(async (req, res, next) => {
-  const student = await Student.findOneAndDelete(req.id).exec();
+  const student = await Student.findByIdAndDelete(req.id).exec();
   res.json({ success: true, student, message: "Deleted user " });
 });
 
@@ -45,7 +45,7 @@ exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
   const isMatch = student.comparepassword(req.body.password);
 
   if (!isMatch) {
-    return next(new ErorrHandler("Wrong Password"), 500);
+    return next(new ErorrHandler("Wrong Password", 500));
   }
   sendtoken(student, 201, res);
 });

@@ -23,7 +23,7 @@ exports.currentEmploye = catchAsyncErorrs(async(req,res,next)=>{
 });
 
 exports.deleteemploye = catchAsyncErorrs(async(req,res,next)=>{
-    const employe = await Employe.findOneAndDelete(req.id).exec();
+    const employe = await Employe.findByIdAndDelete(req.id).exec();
     res.json({success: true , employe , message : "Employe Deleted"});
 
 });
@@ -52,7 +52,7 @@ exports.employesignin = catchAsyncErorrs(async(req,res,next)=>{
 
     if(!isMatch){
 
-        return next(new ErorrHandler("Wrong Password"), 500);
+        return next(new ErorrHandler("Wrong Password", 500));
 
     }
     sendtoken(employe , 201, res)
