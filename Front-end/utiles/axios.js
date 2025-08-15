@@ -1,20 +1,21 @@
 import axios from "axios";
+
+
+
 const instance = axios.create({
-  baseURL:"https://carreerhub.onrender.com",
-  withCredentials: true, 
+  baseURL: "https://carreerhub.onrender.com",
+  withCredentials: true,
   headers: {
-    "Content-Type": "application/json", 
-    Accept: "application/json", 
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
-
+// Request interceptor: guard localStorage access so this file is safe during SSR
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Rely on httpOnly cookie auth set by backend. Do NOT read localStorage here to avoid
+    // header-vs-cookie mismatch and SSR issues.
     return config;
   },
   (error) => {
@@ -23,12 +24,14 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error("Unauthorized! Redirecting to login...");
+    var status = error && error.response && error.response.status;
+    if (status === 401) {
+      if (typeof window !== "undefined") {
+        console.warn("Unauthorized response (401).");
+
+      }
     }
     return Promise.reject(error);
   }
