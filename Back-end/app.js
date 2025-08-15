@@ -23,7 +23,7 @@ app.use(cors({
 }));
 
 // ===== Body Parsers =====
-app.use(express.json());
+app.use(express.json());  
 app.use(express.urlencoded({ extended: false }));
 
 // ===== Session and Cookies =====
