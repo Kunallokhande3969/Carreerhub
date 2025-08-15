@@ -143,11 +143,11 @@ exports.employeupdate = catchAsyncErorrs(async(req,res,next)=>{
 });
 
 exports.employeavatar = catchAsyncErorrs(async (req, res, next) => {
-  console.log("=== employeavatar controller hit ==="); // Yeh line sabse upar
-  console.log("req.file:", req.file);                  // Yeh line uske niche
+  console.log("=== employeavatar controller hit ==="); 
+  console.log("req.file:", req.file);                  
 
   const employe = await Employe.findById(req.params.id).exec();
-  const file = req.file; // Multer se file aise milti hai
+  const file = req.file; 
   if (!file) {
     return next(new ErorrHandler("No file uploaded", 400));
   }
@@ -170,13 +170,17 @@ exports.employeavatar = catchAsyncErorrs(async (req, res, next) => {
   });
 });
 
-//===================================INTERNSHIP=====================
+
 
 exports.createinternship = catchAsyncErorrs(async(req,res,next)=>{ 
+    console.log("createinternship called", req.id, req.body.profile || req.body.title, new Date().toISOString());
     const employe = await Employe.findById(req.id).exec();
     const internship = await new Internship(req.body)
     internship.employe = employe._id;
-    employe.internships.push(internship._id);
+  
+    if (!employe.internships.some(id => id.toString() === internship._id.toString())) {
+      employe.internships.push(internship._id);
+    }
     await internship.save();
     await employe.save();
     res.status(201).json({success : true, internship})
@@ -198,13 +202,16 @@ exports.readsingleinternship= catchAsyncErorrs(async(req,res,next)=>{
 });
 
 
-//===================================JOB=====================
 
 exports.createjob = catchAsyncErorrs(async(req,res,next)=>{ 
+    console.log("createjob called", req.id, req.body.title, new Date().toISOString());
     const employe = await Employe.findById(req.id).exec();
     const job = await new Job(req.body)
     job.employe = employe._id;
-    employe.jobs.push(job._id);
+    // avoid duplicate pushes if this endpoint is called twice
+    if (!employe.jobs.some(id => id.toString() === job._id.toString())) {
+      employe.jobs.push(job._id);
+    }
     await job.save();
     await employe.save();
     res.status(201).json({success : true, job})

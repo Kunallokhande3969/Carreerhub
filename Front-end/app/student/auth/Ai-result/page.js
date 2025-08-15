@@ -68,7 +68,7 @@ export default function AIResultPage() {
 
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-3 text-gray-700">
-              Comprehensive Analysis
+               Comprehensive Analysis from AI
             </h2>
 
             {analysisData?.result ? (
