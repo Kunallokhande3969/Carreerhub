@@ -48,7 +48,7 @@ router.post(
 router.post("/signin", employesignin);
 
 // GET /employe/signout
-router.get("/signout", isAuthenticated, employesignout);
+router.get("/signout", employesignout);
 
 // POST /employe/send-mail
 router.post("/send-mail", employesendmail);

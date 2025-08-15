@@ -51,8 +51,16 @@ exports.studentsignin = catchAsyncErorrs(async (req, res, next) => {
 });
 
 exports.studentsignout = catchAsyncErorrs(async (req, res, next) => {
-  res.clearCookie("token");
-  res.json({ message: "succefully signout" });
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
+  };
+
+  // Clear the cookie with the same options used when setting it so the browser removes it
+  res.clearCookie("token", cookieOptions);
+  res.status(200).json({ message: "successfully signout" });
 });
 
 exports.studentsendmail = catchAsyncErorrs(async (req, res, next) => {

@@ -38,7 +38,7 @@ router.post("/student/signup",studentsignup)
 router.post("/student/signin", studentsignin)
 
 // GET /student/signout
-router.get("/student/signout",isAuthenticated, studentsignout)
+router.get("/student/signout", studentsignout)
 
 // POST /student/send-mail
 router.post("/student/send-mail",studentsendmail)

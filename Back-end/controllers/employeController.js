@@ -63,10 +63,15 @@ exports.employesignin = catchAsyncErorrs(async(req,res,next)=>{
 
 
 exports.employesignout = catchAsyncErorrs(async(req,res,next)=>{
-   
-    res.clearCookie("token");
-    res.json({message : "succefully signout"})
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+  };
 
+  res.clearCookie("token", cookieOptions);
+  res.status(200).json({ message: "successfully signout" });
 });
 
 
