@@ -22,16 +22,16 @@ const {
   deleteemploye,
   closejob,
 } = require("../controllers/employeController");
-const { isAuthenticated, authorizeRoles } = require("../middlewares/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 
 // GET /
 router.get("/", homepage);
 
 // POST / employe
-router.post("/current", isAuthenticated, authorizeRoles("employe"), currentEmploye);
+router.post("/current", isAuthenticated, currentEmploye);
 
 // POST / Delete
-router.get("/delete", isAuthenticated, authorizeRoles("employe"), deleteemploye);
+router.get("/delete", isAuthenticated, deleteemploye);
 
 // POST /employe/signup
 router.post("/signup", employesignup);
@@ -40,7 +40,6 @@ router.post("/signup", employesignup);
 router.post(
   "/avatar/:id",
   isAuthenticated,
-  authorizeRoles("employe"),
   upload.single("organizationLogo"),
   employeavatar
 );
@@ -49,7 +48,7 @@ router.post(
 router.post("/signin", employesignin);
 
 // GET /employe/signout
-router.get("/signout", isAuthenticated, authorizeRoles("employe"), employesignout);
+router.get("/signout", isAuthenticated, employesignout);
 
 // POST /employe/send-mail
 router.post("/send-mail", employesendmail);
@@ -58,34 +57,34 @@ router.post("/send-mail", employesendmail);
 router.post("/forget-link", employeforgetlink);
 
 // POST /employe/reset-password/:id
-router.post("/reset-password/:id", isAuthenticated, authorizeRoles("employe"), employeresetpassword);
+router.post("/reset-password/:id", isAuthenticated, employeresetpassword);
 
 // POST /employe/update/:id
-router.post("/update/:id", isAuthenticated, authorizeRoles("employe"), employeupdate);
+router.post("/update/:id", isAuthenticated, employeupdate);
 
 // ===================INTERNSHIP====================
 
 // POST /employe/internship/create
-router.post("/internship/create", isAuthenticated, authorizeRoles("employe"), createinternship);
+router.post("/internship/create", isAuthenticated, createinternship);
 
 // POST /employe/internship/read
-router.post("/internship/read", isAuthenticated, authorizeRoles("employe"), readinternship);
+router.post("/internship/read", isAuthenticated, readinternship);
 
 // POST /employe/internship/read/:id
-router.post("/internship/read/:id", isAuthenticated, authorizeRoles("employe"), readsingleinternship);
+router.post("/internship/read/:id", isAuthenticated, readsingleinternship);
 
 // ===================JOBS====================
 
 // POST /employe/job/create
-router.post("/job/create", isAuthenticated, authorizeRoles("employe"), createjob);
+router.post("/job/create", isAuthenticated, createjob);
 
 // POST /employe/job/read
-router.post("/job/read", isAuthenticated, authorizeRoles("employe"), readjob);
+router.post("/job/read", isAuthenticated, readjob);
 
 // POST /employe/job/read/:id
-router.post("/job/read/:id", isAuthenticated, authorizeRoles("employe"), readsinglejob);
+router.post("/job/read/:id", isAuthenticated, readsinglejob);
 
 // POST /employe/job/close/:id
-router.post("/job/close/:id", isAuthenticated, authorizeRoles("employe"), closejob);
+router.post("/job/close/:id", isAuthenticated, closejob);
 
 module.exports = router;

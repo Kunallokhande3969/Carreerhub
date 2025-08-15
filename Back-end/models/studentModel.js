@@ -104,7 +104,7 @@ studentModel.methods.comparepassword = function(password){
 }
 
 studentModel.methods.getJwtToken = function(){
-    return jwt.sign({id : this._id, role: 'student'} , process.env.JWT_SECRET , {
+    return jwt.sign({id : this._id} , process.env.JWT_SECRET , {
         expiresIn : process.env.JWT_EXPIRE
     })
 }
@@ -112,3 +112,5 @@ studentModel.methods.getJwtToken = function(){
 const Student = mongoose.model("student", studentModel);
 
 module.exports = Student;
+
+//

@@ -19,17 +19,17 @@ const {
     readsinglejob,
     readsingleinternship,
 } = require("../controllers/indexController");
-const { isAuthenticated, authorizeRoles } = require("../middlewares/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 
 
 // GET / 
 router.get("/",homepage)
 
 // POST / student
-router.post("/student",isAuthenticated, authorizeRoles("student"),current)
+router.post("/student",isAuthenticated,current)
 
 // POST / student
-router.get("/student/delete",isAuthenticated, authorizeRoles("student"),deletestudent)
+router.get("/student/delete",isAuthenticated,deletestudent)
 
 // POST /student/signup
 router.post("/student/signup",studentsignup)
@@ -38,7 +38,7 @@ router.post("/student/signup",studentsignup)
 router.post("/student/signin", studentsignin)
 
 // GET /student/signout
-router.get("/student/signout",isAuthenticated, authorizeRoles("student"), studentsignout)
+router.get("/student/signout",isAuthenticated, studentsignout)
 
 // POST /student/send-mail
 router.post("/student/send-mail",studentsendmail)
@@ -48,27 +48,27 @@ router.post("/student/send-mail",studentsendmail)
 router.post("/student/forget-link",studentforgetlink)
 
 // POST /student/reset-password/:studentid
-router.post("/student/reset-password/:id",isAuthenticated, authorizeRoles("student"), studentresetpassword)
+router.post("/student/reset-password/:id",isAuthenticated, studentresetpassword)
 
 // POST /student/update/:studentid
-router.post("/student/update/:id",isAuthenticated, authorizeRoles("student"), studentupdate)
+router.post("/student/update/:id",isAuthenticated, studentupdate)
 
 // POST /student/readalljob
-router.post("/student/alljob",isAuthenticated, authorizeRoles("student"), studentreadalljobs)
+router.post("/student/alljob",isAuthenticated, studentreadalljobs)
 
 // POST /student/readallinternship
-router.post("/student/allinternship",isAuthenticated, authorizeRoles("student"), studentreadallinternships)
+router.post("/student/allinternship",isAuthenticated, studentreadallinternships)
 
 // POST /student/update/:studentId
-router.post("/student/avatar/:id" , isAuthenticated, authorizeRoles("student"), studentavatar )
+router.post("/student/avatar/:id" , isAuthenticated, studentavatar )
 
 //=================Apply Internships===================
 
-router.post("/student/apply/internship/:internshipid" , isAuthenticated, authorizeRoles("student"),applyinternship)
+router.post("/student/apply/internship/:internshipid" , isAuthenticated,applyinternship)
 
 //================Apply Jobs===========================
 
-router.post("/student/apply/job/:jobid" , isAuthenticated, authorizeRoles("student"),applyjob)
+router.post("/student/apply/job/:jobid" , isAuthenticated,applyjob)
 
 // ====================close job =====================================
 
